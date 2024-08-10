@@ -39,6 +39,20 @@ def open_add_offer_window():
                 number_part NUMERIC, material_scrap NUMERIC)
         '''
         conn.execute(table_create_query)
+
+        data_insert_query = f'''INSERT INTO {table_name} (part_designation,
+            designation_raw, imputed_costs, number_part,
+            material_scrap) VALUES
+            (?, ?, ?, ?, ?)'''
+        data_insert_tuple = (part_designation,
+                             designation_raw, imputed_costs,
+                             number_part, material_scrap)
+
+        cursor = conn.cursor()
+        cursor.execute(data_insert_query, data_insert_tuple)
+
+        conn.commit()
+
         conn.close()
 
         print(part_designation, designation_raw,
