@@ -1,4 +1,5 @@
 import tkinter
+import sqlite3
 
 
 def create_main_menu():
@@ -22,6 +23,27 @@ def create_main_menu():
 
 
 def open_add_offer_window():
+
+    def save_material_data():
+        table_name = entry_name_entry.get()
+        part_designation = part_designation_entry.get()
+        designation_raw = designation_raw_entry.get()
+        imputed_costs = imputed_costs_entry.get()
+        number_part = number_part_entry.get()
+        material_scrap = material_scrap_entry.get()
+
+        conn = sqlite3.connect('data.db')
+        table_create_query = f'''CREATE TABLE IF NOT EXISTS {table_name}
+                (part_designation TEXT, designation_raw TEXT,
+                imputed_costs NUMERIC,
+                number_part NUMERIC, material_scrap NUMERIC)
+        '''
+        conn.execute(table_create_query)
+        conn.close()
+
+        print(part_designation, designation_raw,
+              imputed_costs, number_part, material_scrap, table_name)
+
     main_menu_window.destroy()
 
     add_offer_window = tkinter.Tk()
@@ -75,7 +97,9 @@ def open_add_offer_window():
     material_scrap_entry.grid(row=9, column=0)
 
     material_save_button = tkinter.Button(materials_frame,
-                                          text="Save", width=10, height=1)
+                                          text="Save",
+                                          width=10, height=1,
+                                          command=save_material_data)
     material_save_button.grid(row=9, column=1)
 
     for widget in materials_frame.winfo_children():
