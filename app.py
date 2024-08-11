@@ -8,16 +8,25 @@ def create_main_menu():
     main_menu_window.title("Main Menu")
     main_menu_window.geometry("400x300")
 
-    add_offer_button = tkinter.Button(main_menu_window, text="Add Offer",
+    button_frame = tkinter.Frame(main_menu_window)
+    button_frame.pack(pady=20)
+
+    add_offer_button = tkinter.Button(button_frame,
+                                      text="Add Offer",
                                       command=open_add_offer_window)
-    add_offer_button.pack(pady=20)
+    add_offer_button.grid(row=0, column=0, padx=10, pady=10)
 
-    load_offer_button = tkinter.Button(main_menu_window, text="Load Offer")
-    load_offer_button.pack(pady=20)
+    load_offer_frame = tkinter.Frame(button_frame)
+    load_offer_frame.grid(row=1, column=0, padx=10, pady=10)
 
-    compare_offer_button = tkinter.Button(main_menu_window,
-                                          text="Compare Offers")
-    compare_offer_button.pack(pady=20)
+    load_offer_button = tkinter.Button(load_offer_frame, text="Load Offer")
+    load_offer_button.grid(row=1, column=0)
+
+    load_offer_entry = tkinter.Entry(load_offer_frame)
+    load_offer_entry.grid(row=1, column=1, padx=5)
+
+    compare_offer_button = tkinter.Button(button_frame, text="Compare Offers")
+    compare_offer_button.grid(row=2, column=0, padx=10, pady=10)
 
     main_menu_window.mainloop()
 
