@@ -19,16 +19,71 @@ def create_main_menu():
     load_offer_frame = tkinter.Frame(button_frame)
     load_offer_frame.grid(row=1, column=0, padx=10, pady=10)
 
-    load_offer_button = tkinter.Button(load_offer_frame, text="Load Offer")
-    load_offer_button.grid(row=1, column=0)
-
     load_offer_entry = tkinter.Entry(load_offer_frame)
     load_offer_entry.grid(row=1, column=1, padx=5)
+
+    load_offer_button = tkinter.Button(load_offer_frame,
+                                       text="Load Offer",
+                                       command=lambda:
+                                       load_offer(load_offer_entry.get()))
+    load_offer_button.grid(row=1, column=0)
 
     compare_offer_button = tkinter.Button(button_frame, text="Compare Offers")
     compare_offer_button.grid(row=2, column=0, padx=10, pady=10)
 
     main_menu_window.mainloop()
+
+
+def load_offer(partial_table_name):
+
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    try:
+        # Fetch all table names that match the partial name
+        cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name LIKE ?", ('%' + partial_table_name + '%',))
+        matching_tables = cursor.fetchall()
+
+        if matching_tables:
+            result_window = tkinter.Toplevel(main_menu_window)
+            result_window.title(
+                f"Data from tables matching '{partial_table_name}'")
+
+            for table in matching_tables:
+                table_name = table[0]
+
+                # Create a LabelFrame for each table
+                table_frame = tkinter.LabelFrame(result_window,
+                                                 text=f"Table: {table_name}",
+                                                 padx=10, pady=10)
+                table_frame.pack(fill="both", expand="yes", padx=10, pady=10)
+
+                cursor.execute(f"SELECT * FROM {table_name}")
+                data = cursor.fetchall()
+
+                cursor.execute(f"PRAGMA table_info({table_name})")
+                columns = [col[1] for col in cursor.fetchall()]
+
+                # Display the column headers
+                for i, col in enumerate(columns):
+                    label = tkinter.Label(table_frame, text=col,
+                                          font=('bold', 10))
+                    label.grid(row=0, column=i, padx=5, pady=5)
+
+                # Display the data rows
+                for i, row in enumerate(data):
+                    for j, value in enumerate(row):
+                        label = tkinter.Label(table_frame, text=str(value))
+                        label.grid(row=i+1, column=j, padx=5, pady=5)
+        else:
+            tkinter.Label(main_menu_window,
+                          text="No tables found.").pack(pady=10)
+
+    except sqlite3.Error as e:
+        tkinter.Label(main_menu_window, text=f"Error: {str(e)}").pack(pady=10)
+
+    finally:
+        conn.close()
 
 
 def open_add_offer_window():
