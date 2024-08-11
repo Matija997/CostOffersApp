@@ -40,7 +40,6 @@ def load_offer(partial_table_name):
     cursor = conn.cursor()
 
     try:
-        # Fetch all table names that match the partial name
         cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name LIKE ?", ('%' + partial_table_name + '%',))
         matching_tables = cursor.fetchall()
 
@@ -52,7 +51,6 @@ def load_offer(partial_table_name):
             for table in matching_tables:
                 table_name = table[0]
 
-                # Create a LabelFrame for each table
                 table_frame = tkinter.LabelFrame(result_window,
                                                  text=f"Table: {table_name}",
                                                  padx=10, pady=10)
@@ -64,13 +62,11 @@ def load_offer(partial_table_name):
                 cursor.execute(f"PRAGMA table_info({table_name})")
                 columns = [col[1] for col in cursor.fetchall()]
 
-                # Display the column headers
                 for i, col in enumerate(columns):
                     label = tkinter.Label(table_frame, text=col,
                                           font=('bold', 10))
                     label.grid(row=0, column=i, padx=5, pady=5)
 
-                # Display the data rows
                 for i, row in enumerate(data):
                     for j, value in enumerate(row):
                         label = tkinter.Label(table_frame, text=str(value))
