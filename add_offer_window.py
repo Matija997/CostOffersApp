@@ -1,6 +1,7 @@
 import tkinter
 import sqlite3
 import main_menu_window as mmw
+import tkinter.messagebox
 
 
 def open_add_offer_window():
@@ -46,6 +47,10 @@ def open_add_offer_window():
 
         conn.close()
 
+        tkinter.messagebox.showinfo("Success", f"Material: {part_designation}"
+                                    "successfully added to"
+                                    f" {table_name} table!")
+
         print(part_designation, designation_raw,
               imputed_costs, number_part, material_scrap, table_name)
 
@@ -85,7 +90,9 @@ def open_add_offer_window():
         conn.commit()
 
         conn.close()
-
+        tkinter.messagebox.showinfo("Success", f"Manufacturing: "
+                                    f"{manufacturing_part} successfully added"
+                                    f" to {table_name} table!")
         print(manufacturing_part, direct_cost,
               manufacturing_cost, scrap_per_process, table_name)
 
@@ -122,6 +129,9 @@ def open_add_offer_window():
         conn.commit()
 
         conn.close()
+        tkinter.messagebox.showinfo("Success", f"Billing method: "
+                                    f"{billing_method} successfully added"
+                                    f" to {table_name} table!")
 
         print(billing_method, device_cost, table_name)
 

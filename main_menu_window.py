@@ -46,7 +46,15 @@ def compare_offer(partial_table_name):
     cursor = conn.cursor()
 
     try:
-        cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name LIKE ?", ('%' + partial_table_name + '%',))
+        query = (
+            "SELECT name FROM sqlite_master "
+            "WHERE type='table' AND name LIKE ?"
+        )
+
+        parameter = ('%' + partial_table_name + '%',)
+
+        cursor.execute(query, parameter)
+
         matching_tables = cursor.fetchall()
 
         if matching_tables:
@@ -193,7 +201,6 @@ def load_offers():
                         entry.grid(row=i+1, column=j, padx=5, pady=5)
                         entries.append(entry)
 
-                # Optionally, you can add a save button to update the database
                 save_button = tkinter.Button(table_frame, text="Save Changes",
                                              command=lambda t=table_name,
                                              e=entries: save_changes(t, e))
@@ -224,7 +231,13 @@ def save_changes(table_name, entries):
             row = i // len(columns)
             col = i % len(columns)
             value = entry.get()
-            cursor.execute(f"UPDATE {table_name} SET {columns[col]} = ? WHERE rowid = ?", (value, row + 1))
+            query = (
+                f"UPDATE {table_name} "
+                f"SET {columns[col]} = ? "
+                f"WHERE rowid = ?")
+            parameters = (value, row + 1)
+
+            cursor.execute(query, parameters)
 
         conn.commit()
         tkinter.messagebox.showinfo("Success", "Changes saved successfully!")
