@@ -3,6 +3,7 @@ import sqlite3
 from tkinter import ttk
 from add_offer_window import open_add_offer_window
 import tkinter.messagebox
+from database import get_connection
 
 
 def create_main_menu():
@@ -42,7 +43,7 @@ def create_main_menu():
 
 def compare_offer(partial_table_name):
 
-    conn = sqlite3.connect('data.db')
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -135,7 +136,7 @@ def compare_offer(partial_table_name):
 
 
 def load_offers():
-    conn = sqlite3.connect('data.db')
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -231,7 +232,7 @@ def load_offers():
 
 
 def delete_row(table_name, row_id, current_window):
-    conn = sqlite3.connect('data.db')
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -249,7 +250,7 @@ def delete_row(table_name, row_id, current_window):
 
 
 def save_changes(table_name, entries):
-    conn = sqlite3.connect('data.db')
+    conn = get_connection()
     cursor = conn.cursor()
 
     try:

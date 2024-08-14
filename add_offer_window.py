@@ -1,6 +1,6 @@
 import tkinter
-import sqlite3
 import tkinter.messagebox
+from database import get_connection, create_table, insert_data
 
 
 def open_add_offer_window():
@@ -14,27 +14,9 @@ def open_add_offer_window():
         material_scrap = float(material_scrap_entry.get())
         total_material = (imputed_costs*number_part)*(100-material_scrap)/100
 
-        conn = sqlite3.connect('data.db')
-        table_create_query = f'''CREATE TABLE IF NOT EXISTS {table_name}
-                (material_part_designation TEXT, designation_raw TEXT,
-                imputed_costs NUMERIC,
-                number_part NUMERIC, material_scrap NUMERIC,
-                manufacturing_part_designation TEXT,
-                direct_manufacturing_costs NUMERIC,
-                manufacturing_costs NUMERIC, scrap_per_process NUMERIC,
-                billing_method TEXT, inputed_device_cost NUMERIC,
-                total_material NUMERIC)
-        '''
-        conn.execute(table_create_query)
-
-        data_insert_query = f'''INSERT INTO {table_name}
-            (material_part_designation,
-            designation_raw, imputed_costs, number_part,
-            material_scrap, manufacturing_part_designation,
-            direct_manufacturing_costs, manufacturing_costs,
-            scrap_per_process, billing_method, inputed_device_cost,
-            total_material) VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+        conn = get_connection()
+        create_table(conn, table_name)
+        data_insert_query = insert_data(table_name)
         data_insert_tuple = (part_designation,
                              designation_raw, imputed_costs,
                              number_part, material_scrap, None,
@@ -61,28 +43,12 @@ def open_add_offer_window():
         manufacturing_cost = manufacturing_cost_entry.get()
         scrap_per_process = scrap_process_entry.get()
 
-        conn = sqlite3.connect('data.db')
-        table_create_query = f'''CREATE TABLE IF NOT EXISTS {table_name}
-                (material_part_designation TEXT, designation_raw TEXT,
-                imputed_costs NUMERIC,
-                number_part NUMERIC, material_scrap NUMERIC,
-                manufacturing_part_designation TEXT,
-                direct_manufacturing_costs NUMERIC,
-                manufacturing_costs NUMERIC, scrap_per_process NUMERIC,
-                billing_method TEXT, inputed_device_cost NUMERIC)
-        '''
-        conn.execute(table_create_query)
-
-        data_insert_query = f'''INSERT INTO {table_name}
-            (material_part_designation,
-            designation_raw, imputed_costs, number_part,
-            material_scrap, manufacturing_part_designation,
-            direct_manufacturing_costs, manufacturing_costs,
-            scrap_per_process, billing_method, inputed_device_cost) VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+        conn = get_connection()
+        create_table(conn, table_name)
+        data_insert_query = insert_data(table_name)
         data_insert_tuple = (None, None, None, None, None, manufacturing_part,
                              direct_cost, manufacturing_cost,
-                             scrap_per_process, None, None)
+                             scrap_per_process, None, None, None)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
@@ -101,27 +67,12 @@ def open_add_offer_window():
         billing_method = billing_method_entry.get()
         device_cost = device_cost_entry.get()
 
-        conn = sqlite3.connect('data.db')
-        table_create_query = f'''CREATE TABLE IF NOT EXISTS {table_name}
-                (material_part_designation TEXT, designation_raw TEXT,
-                imputed_costs NUMERIC,
-                number_part NUMERIC, material_scrap NUMERIC,
-                manufacturing_part_designation TEXT,
-                direct_manufacturing_costs NUMERIC,
-                manufacturing_costs NUMERIC, scrap_per_process NUMERIC,
-                billing_method TEXT, inputed_device_cost NUMERIC)
-        '''
-        conn.execute(table_create_query)
-
-        data_insert_query = f'''INSERT INTO {table_name}
-            (material_part_designation,
-            designation_raw, imputed_costs, number_part,
-            material_scrap, manufacturing_part_designation,
-            direct_manufacturing_costs, manufacturing_costs,
-            scrap_per_process, billing_method, inputed_device_cost) VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+        conn = get_connection()
+        create_table(conn, table_name)
+        data_insert_query = insert_data(table_name)
         data_insert_tuple = (None, None, None, None, None, None,
-                             None, None, None, billing_method, device_cost)
+                             None, None, None, billing_method, device_cost,
+                             None)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
