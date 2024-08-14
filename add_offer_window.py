@@ -12,7 +12,6 @@ def open_add_offer_window():
         imputed_costs = float(imputed_costs_entry.get())
         number_part = int(number_part_entry.get())
         material_scrap = float(material_scrap_entry.get())
-        total_material = (imputed_costs*number_part)*(100-material_scrap)/100
 
         conn = get_connection()
         create_table(conn, table_name)
@@ -20,7 +19,7 @@ def open_add_offer_window():
         data_insert_tuple = (part_designation,
                              designation_raw, imputed_costs,
                              number_part, material_scrap, None,
-                             None, None, None, None, None, total_material)
+                             None, None, None, None, None)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
@@ -48,7 +47,7 @@ def open_add_offer_window():
         data_insert_query = insert_data(table_name)
         data_insert_tuple = (None, None, None, None, None, manufacturing_part,
                              direct_cost, manufacturing_cost,
-                             scrap_per_process, None, None, None)
+                             scrap_per_process, None, None)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
@@ -71,8 +70,7 @@ def open_add_offer_window():
         create_table(conn, table_name)
         data_insert_query = insert_data(table_name)
         data_insert_tuple = (None, None, None, None, None, None,
-                             None, None, None, billing_method, device_cost,
-                             None)
+                             None, None, None, billing_method, device_cost)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)

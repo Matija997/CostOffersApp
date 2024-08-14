@@ -115,10 +115,56 @@ def compare_offer(partial_table_name):
                                           text=col_name, font=('bold', 10))
                     label.grid(row=0, column=i, padx=5, pady=5)
 
+                total_material = 0
+                total_manufacturing = 0
+
                 for i, row_data in enumerate(data):
                     for j, value in enumerate(row_data):
                         label = tkinter.Label(table_frame, text=str(value))
                         label.grid(row=i+1, column=j, padx=5, pady=5)
+
+                    if len(row_data) >= 5:
+                        try:
+                            r1 = row_data[2]
+                            r2 = row_data[3]
+                            r3 = row_data[4]
+
+                            a = float(r1) if r1 is not None else 0
+                            b = float(r2) if r2 is not None else 0
+                            c = float(r3) if r3 is not None else 0
+                            total_material += (a * b * (100 + c)) / 100
+                        except ValueError:
+                            pass
+
+                    if len(row_data) >= 7:
+                        try:
+                            if (row_data[6] is None):
+                                a = 0
+                            else:
+                                a = float(row_data[6])
+                            total_manufacturing += a
+                        except ValueError:
+                            pass
+
+                total_frame = ttk.Frame(table_frame)
+                total_frame.grid(row=len(data)+1, column=len(columns)-1,
+                                 padx=10, pady=10, sticky="se")
+
+                total_material_label = tkinter.Label(
+                    total_frame,
+                    text="Total Material Cost: "
+                    f"{total_material:.2f} $",
+                    font=('bold', 10))
+                total_material_label.grid(row=0, column=9,
+                                          padx=5, pady=5)
+
+                total_manufacturing_label = tkinter.Label(
+                    total_frame,
+                    text="Total Manufacturing Cost: "
+                    f"{total_manufacturing:.2f} $",
+                    font=('bold', 10))
+                total_manufacturing_label.grid(row=1, column=9,
+                                               padx=5, pady=5)
 
                 col += 1
                 if (idx + 1) % 2 == 0:
