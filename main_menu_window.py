@@ -58,11 +58,12 @@ def compare_offer(partial_table_name):
         matching_tables = cursor.fetchall()
 
         if matching_tables:
-            result_window = tkinter.Toplevel(main_menu_window)
-            result_window.title(f"Data tables matching '{partial_table_name}'")
-            result_window.state('zoomed')
+            compare_offer_window = tkinter.Tk()
+            compare_offer_window.title("Data tables matching "
+                                       f"'{partial_table_name}'")
+            compare_offer_window.state('zoomed')
 
-            container = ttk.Frame(result_window)
+            container = ttk.Frame(compare_offer_window)
             container.pack(fill="both", expand=True)
 
             canvas = tkinter.Canvas(container)
@@ -142,11 +143,11 @@ def load_offers():
         tables = cursor.fetchall()
 
         if tables:
-            result_window = tkinter.Toplevel(main_menu_window)
-            result_window.title("All Tables")
-            result_window.state('zoomed')
+            load_offers_window = tkinter.Tk()
+            load_offers_window.title("All Tables")
+            load_offers_window.state('zoomed')
 
-            container = ttk.Frame(result_window)
+            container = ttk.Frame(load_offers_window)
             container.pack(fill="both", expand=True)
 
             canvas = tkinter.Canvas(container)
@@ -182,7 +183,7 @@ def load_offers():
                 table_frame.grid(row=row, column=0,
                                  padx=10, pady=10, sticky="nsew")
 
-                cursor.execute(f"SELECT * FROM {table_name}")
+                cursor.execute(f"SELECT rowid, * FROM {table_name}")
                 data = cursor.fetchall()
 
                 cursor.execute(f"PRAGMA table_info({table_name})")
@@ -195,11 +196,21 @@ def load_offers():
 
                 entries = []
                 for i, row_data in enumerate(data):
-                    for j, value in enumerate(row_data):
+                    rowid = row_data[0]
+                    for j, value in enumerate(row_data[1:]):
                         entry = tkinter.Entry(table_frame)
                         entry.insert(0, str(value))
                         entry.grid(row=i+1, column=j, padx=5, pady=5)
                         entries.append(entry)
+
+                    delete_button = tkinter.Button(table_frame,
+                                                   text="Delete Row",
+                                                   command=lambda t=table_name,
+                                                   r=rowid,
+                                                   w=load_offers_window:
+                                                   delete_row(t, r, w))
+                    delete_button.grid(row=i+1, column=len(columns),
+                                       padx=5, pady=5)
 
                 save_button = tkinter.Button(table_frame, text="Save Changes",
                                              command=lambda t=table_name,
@@ -214,6 +225,24 @@ def load_offers():
 
     except sqlite3.Error as e:
         tkinter.Label(main_menu_window, text=f"Error: {str(e)}").pack(pady=10)
+
+    finally:
+        conn.close()
+
+
+def delete_row(table_name, row_id, current_window):
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(f"DELETE FROM {table_name} WHERE rowid = ?", (row_id,))
+        conn.commit()
+        tkinter.messagebox.showinfo("Success", "Row deleted successfully!")
+        current_window.destroy()
+        load_offers()
+
+    except sqlite3.Error as e:
+        tkinter.messagebox.showerror("Error", f"Error: {str(e)}")
 
     finally:
         conn.close()

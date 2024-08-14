@@ -1,20 +1,18 @@
 import tkinter
 import sqlite3
-import main_menu_window as mmw
 import tkinter.messagebox
 
 
 def open_add_offer_window():
 
-    mmw.main_menu_window.destroy()
-
     def save_material_data():
         table_name = entry_name_entry.get()
         part_designation = part_designation_entry.get()
         designation_raw = designation_raw_entry.get()
-        imputed_costs = imputed_costs_entry.get()
-        number_part = number_part_entry.get()
-        material_scrap = material_scrap_entry.get()
+        imputed_costs = float(imputed_costs_entry.get())
+        number_part = int(number_part_entry.get())
+        material_scrap = float(material_scrap_entry.get())
+        total_material = (imputed_costs*number_part)*(100-material_scrap)/100
 
         conn = sqlite3.connect('data.db')
         table_create_query = f'''CREATE TABLE IF NOT EXISTS {table_name}
@@ -24,7 +22,8 @@ def open_add_offer_window():
                 manufacturing_part_designation TEXT,
                 direct_manufacturing_costs NUMERIC,
                 manufacturing_costs NUMERIC, scrap_per_process NUMERIC,
-                billing_method TEXT, inputed_device_cost NUMERIC)
+                billing_method TEXT, inputed_device_cost NUMERIC,
+                total_material NUMERIC)
         '''
         conn.execute(table_create_query)
 
@@ -33,12 +32,13 @@ def open_add_offer_window():
             designation_raw, imputed_costs, number_part,
             material_scrap, manufacturing_part_designation,
             direct_manufacturing_costs, manufacturing_costs,
-            scrap_per_process, billing_method, inputed_device_cost) VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+            scrap_per_process, billing_method, inputed_device_cost,
+            total_material) VALUES
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
         data_insert_tuple = (part_designation,
                              designation_raw, imputed_costs,
                              number_part, material_scrap, None,
-                             None, None, None, None, None)
+                             None, None, None, None, None, total_material)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
@@ -270,6 +270,5 @@ def open_add_offer_window():
 
     def back_to_main_menu(current_window):
         current_window.destroy()
-        mmw.create_main_menu()
 
     add_offer_window.mainloop()
