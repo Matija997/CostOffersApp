@@ -2,7 +2,6 @@ import tkinter
 import sqlite3
 from tkinter import ttk
 import tkinter.messagebox
-import webbrowser
 import os
 from database import get_connection
 
@@ -131,19 +130,17 @@ def compare_offer(partial_table_name, current_window):
                     font=('bold', 10))
                 total_manufacturing_label.grid(row=1, column=9,
                                                padx=5, pady=5)
-
-                file_link = data[-1][-1]
+                file_link = data[i][j+1]
                 if file_link:
-                    def open_file(file_link=file_link):
+                    def open_file(file_link):
 
-                        script_dir = os.path.dirname(os.path.abspath(__file__))
-                        full_path = os.path.join(script_dir, file_link)
-                        webbrowser.open(f"file:///{full_path}")
+                        full_path = os.path.join('excel_files', file_link)
+                        os.startfile(full_path)
 
                     file_button = tkinter.Button(total_frame,
                                                  text="Open Excel File",
-                                                 command=lambda:
-                                                 open_file(file_link))
+                                                 command=lambda f1=file_link:
+                                                 open_file(f1))
                     file_button.grid(row=2, column=9, padx=5, pady=5)
 
                 col += 1
