@@ -19,7 +19,7 @@ def open_add_offer_window():
         data_insert_tuple = (part_designation,
                              designation_raw, imputed_costs,
                              number_part, material_scrap, None,
-                             None, None, None, None, None)
+                             None, None, None, None, None, None)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
@@ -47,7 +47,7 @@ def open_add_offer_window():
         data_insert_query = insert_data(table_name)
         data_insert_tuple = (None, None, None, None, None, manufacturing_part,
                              direct_cost, manufacturing_cost,
-                             scrap_per_process, None, None)
+                             scrap_per_process, None, None, None)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
@@ -65,12 +65,14 @@ def open_add_offer_window():
         table_name = entry_name_entry.get()
         billing_method = billing_method_entry.get()
         device_cost = device_cost_entry.get()
+        excel_link = file_link_entry.get()
 
         conn = get_connection()
         create_table(conn, table_name)
         data_insert_query = insert_data(table_name)
         data_insert_tuple = (None, None, None, None, None, None,
-                             None, None, None, billing_method, device_cost)
+                             None, None, None, billing_method, device_cost,
+                             excel_link)
 
         cursor = conn.cursor()
         cursor.execute(data_insert_query, data_insert_tuple)
@@ -202,10 +204,16 @@ def open_add_offer_window():
     device_cost_entry = tkinter.Entry(sbm_devices_frame)
     device_cost_entry.grid(row=3, column=0)
 
+    file_link_label = tkinter.Label(sbm_devices_frame, text="Excel file link")
+    file_link_label.grid(row=4, column=0)
+
+    file_link_entry = tkinter.Entry(sbm_devices_frame)
+    file_link_entry.grid(row=5, column=0)
+
     device_save_button = tkinter.Button(sbm_devices_frame,
                                         text="Save", width=10, height=1,
                                         command=save_SBM_data)
-    device_save_button.grid(row=3, column=1)
+    device_save_button.grid(row=5, column=1)
 
     for widget in sbm_devices_frame.winfo_children():
         widget.grid_configure(padx=10, pady=5)

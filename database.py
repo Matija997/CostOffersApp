@@ -15,7 +15,8 @@ def create_table(conn, table_name):
         manufacturing_part_designation TEXT,
         direct_manufacturing_costs NUMERIC,
         manufacturing_costs NUMERIC, scrap_per_process NUMERIC,
-        billing_method TEXT, inputed_device_cost NUMERIC)
+        billing_method TEXT, inputed_device_cost NUMERIC,
+        excel_link TEXT)
     '''
     conn.execute(query)
 
@@ -26,7 +27,7 @@ def insert_data(table_name):
         (material_part_designation, designation_raw, imputed_costs,
         number_part, material_scrap, manufacturing_part_designation,
         direct_manufacturing_costs, manufacturing_costs, scrap_per_process,
-        billing_method, inputed_device_cost) VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+        billing_method, inputed_device_cost, excel_link) VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
     return data_insert_query

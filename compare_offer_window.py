@@ -2,6 +2,8 @@ import tkinter
 import sqlite3
 from tkinter import ttk
 import tkinter.messagebox
+import webbrowser
+import os
 from database import get_connection
 
 
@@ -74,7 +76,7 @@ def compare_offer(partial_table_name, current_window):
                 cursor.execute(f"PRAGMA table_info({table_name})")
                 columns = [col[1] for col in cursor.fetchall()]
 
-                for i, col_name in enumerate(columns):
+                for i, col_name in enumerate(columns[:-1]):
                     label = tkinter.Label(table_frame,
                                           text=col_name, font=('bold', 10))
                     label.grid(row=0, column=i, padx=5, pady=5)
@@ -83,7 +85,7 @@ def compare_offer(partial_table_name, current_window):
                 total_manufacturing = 0
 
                 for i, row_data in enumerate(data):
-                    for j, value in enumerate(row_data):
+                    for j, value in enumerate(row_data[:-1]):
                         label = tkinter.Label(table_frame, text=str(value))
                         label.grid(row=i+1, column=j, padx=5, pady=5)
 
@@ -129,6 +131,20 @@ def compare_offer(partial_table_name, current_window):
                     font=('bold', 10))
                 total_manufacturing_label.grid(row=1, column=9,
                                                padx=5, pady=5)
+
+                file_link = data[-1][-1]
+                if file_link:
+                    def open_file(file_link=file_link):
+
+                        script_dir = os.path.dirname(os.path.abspath(__file__))
+                        full_path = os.path.join(script_dir, file_link)
+                        webbrowser.open(f"file:///{full_path}")
+
+                    file_button = tkinter.Button(total_frame,
+                                                 text="Open Excel File",
+                                                 command=lambda:
+                                                 open_file(file_link))
+                    file_button.grid(row=2, column=9, padx=5, pady=5)
 
                 col += 1
                 if (idx + 1) % 2 == 0:
