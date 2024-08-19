@@ -16,7 +16,8 @@ def create_main_menu():
 
     add_offer_button = tkinter.Button(button_frame,
                                       text="Add Offer",
-                                      command=open_add_offer_window)
+                                      command=lambda:
+                                      open_add_offer_window(main_menu_window))
     add_offer_button.grid(row=0, column=0, padx=10, pady=10)
 
     load_offer_button = tkinter.Button(button_frame,

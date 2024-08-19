@@ -3,88 +3,118 @@ import tkinter.messagebox
 from database import get_connection, create_table, insert_data
 
 
-def open_add_offer_window():
+def open_add_offer_window(current_window):
+    from main_menu_window import create_main_menu
+
+    current_window.destroy()
 
     def save_material_data():
-        table_name = entry_name_entry.get()
-        part_designation = part_designation_entry.get()
-        designation_raw = designation_raw_entry.get()
-        imputed_costs = float(imputed_costs_entry.get())
-        number_part = int(number_part_entry.get())
-        material_scrap = float(material_scrap_entry.get())
 
-        conn = get_connection()
-        create_table(conn, table_name)
-        data_insert_query = insert_data(table_name)
-        data_insert_tuple = (part_designation,
-                             designation_raw, imputed_costs,
-                             number_part, material_scrap, None,
-                             None, None, None, None, None, None)
+        try:
+            if (entry_name_entry.get() == ''):
+                raise ValueError("Entry name must be entered")
+            table_name = entry_name_entry.get()
+            part_designation = part_designation_entry.get()
+            designation_raw = designation_raw_entry.get()
+            imputed_costs = float(imputed_costs_entry.get())
+            number_part = int(number_part_entry.get())
+            material_scrap = float(material_scrap_entry.get())
 
-        cursor = conn.cursor()
-        cursor.execute(data_insert_query, data_insert_tuple)
+            conn = get_connection()
+            create_table(conn, table_name)
+            data_insert_query = insert_data(table_name)
+            data_insert_tuple = (part_designation,
+                                 designation_raw, imputed_costs,
+                                 number_part, material_scrap, None,
+                                 None, None, None, None, None, None)
 
-        conn.commit()
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
 
-        conn.close()
+            conn.commit()
 
-        tkinter.messagebox.showinfo("Success", f"Material: {part_designation}"
-                                    "successfully added to"
-                                    f" {table_name} table!")
+            conn.close()
 
-        print(part_designation, designation_raw,
-              imputed_costs, number_part, material_scrap, table_name)
+            tkinter.messagebox.showinfo("Success",
+                                        f"Material: {part_designation}"
+                                        " successfully added to"
+                                        f" {table_name} table!")
+
+            print(part_designation, designation_raw,
+                  imputed_costs, number_part, material_scrap, table_name)
+
+        except ValueError:
+            tkinter.messagebox.showerror("Error", "Entry name must be "
+                                         "non-empty string")
 
     def save_manufacturing_data():
-        table_name = entry_name_entry.get()
-        manufacturing_part = part_designation_entry2.get()
-        direct_cost = direct_cost_entry.get()
-        manufacturing_cost = manufacturing_cost_entry.get()
-        scrap_per_process = scrap_process_entry.get()
 
-        conn = get_connection()
-        create_table(conn, table_name)
-        data_insert_query = insert_data(table_name)
-        data_insert_tuple = (None, None, None, None, None, manufacturing_part,
-                             direct_cost, manufacturing_cost,
-                             scrap_per_process, None, None, None)
+        try:
+            if (entry_name_entry.get() == ''):
+                raise ValueError
+            else:
+                table_name = entry_name_entry.get()
+            manufacturing_part = part_designation_entry2.get()
+            direct_cost = direct_cost_entry.get()
+            manufacturing_cost = manufacturing_cost_entry.get()
+            scrap_per_process = scrap_process_entry.get()
 
-        cursor = conn.cursor()
-        cursor.execute(data_insert_query, data_insert_tuple)
+            conn = get_connection()
+            create_table(conn, table_name)
+            data_insert_query = insert_data(table_name)
+            data_insert_tuple = (None, None, None, None, None,
+                                 manufacturing_part,
+                                 direct_cost, manufacturing_cost,
+                                 scrap_per_process, None, None, None)
 
-        conn.commit()
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
 
-        conn.close()
-        tkinter.messagebox.showinfo("Success", f"Manufacturing: "
-                                    f"{manufacturing_part} successfully added"
-                                    f" to {table_name} table!")
-        print(manufacturing_part, direct_cost,
-              manufacturing_cost, scrap_per_process, table_name)
+            conn.commit()
+
+            conn.close()
+            tkinter.messagebox.showinfo("Success", f"Manufacturing: "
+                                        f"{manufacturing_part}"
+                                        " successfully added"
+                                        f" to {table_name} table!")
+            print(manufacturing_part, direct_cost,
+                  manufacturing_cost, scrap_per_process, table_name)
+        except ValueError:
+            tkinter.messagebox.showerror("Error", "Entry name must be "
+                                         "non-empty string")
 
     def save_SBM_data():
-        table_name = entry_name_entry.get()
-        billing_method = billing_method_entry.get()
-        device_cost = device_cost_entry.get()
-        excel_link = file_link_entry.get()
 
-        conn = get_connection()
-        create_table(conn, table_name)
-        data_insert_query = insert_data(table_name)
-        data_insert_tuple = (None, None, None, None, None, None,
-                             None, None, None, billing_method, device_cost,
-                             excel_link)
+        try:
+            if (entry_name_entry.get() == ''):
+                raise ValueError("Entry name must be entered")
+            table_name = entry_name_entry.get()
+            billing_method = billing_method_entry.get()
+            device_cost = device_cost_entry.get()
+            excel_link = file_link_entry.get()
 
-        cursor = conn.cursor()
-        cursor.execute(data_insert_query, data_insert_tuple)
+            conn = get_connection()
+            create_table(conn, table_name)
+            data_insert_query = insert_data(table_name)
+            data_insert_tuple = (None, None, None, None, None, None,
+                                 None, None, None, billing_method, device_cost,
+                                 excel_link)
 
-        conn.commit()
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
 
-        conn.close()
-        tkinter.messagebox.showinfo("Success", f"Billing method: "
-                                    f"{billing_method} successfully added"
-                                    f" to {table_name} table!")
+            conn.commit()
 
-        print(billing_method, device_cost, table_name)
+            conn.close()
+            tkinter.messagebox.showinfo("Success", f"Billing method: "
+                                        f"{billing_method} successfully added"
+                                        f" to {table_name} table!")
+
+            print(billing_method, device_cost, table_name)
+
+        except ValueError:
+            tkinter.messagebox.showerror("Error", "Entry name must be "
+                                         "non-empty string")
 
     add_offer_window = tkinter.Tk()
     add_offer_window.title("Add offer")
@@ -227,5 +257,6 @@ def open_add_offer_window():
 
     def back_to_main_menu(current_window):
         current_window.destroy()
+        create_main_menu()
 
     add_offer_window.mainloop()

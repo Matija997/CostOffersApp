@@ -1,4 +1,4 @@
-import main_menu_window
+from main_menu_window import create_main_menu
 import database as db
 import os
 import shutil
@@ -9,4 +9,4 @@ version = len(files)
 backup_name = f"backups/data_{version}.0.db"
 shutil.copy('data.db', backup_name)
 conn.close()
-main_menu_window.create_main_menu()
+create_main_menu()
