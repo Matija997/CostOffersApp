@@ -129,6 +129,9 @@ def open_add_offer_window(current_window):
     add_offer_window.title("Add offer")
     add_offer_window.state('zoomed')
 
+    screen_width = add_offer_window.winfo_screenwidth()
+    half_screen_width = screen_width // 2
+
     canvas = tkinter.Canvas(add_offer_window)
     scroll_y = tkinter.Scrollbar(add_offer_window, orient="vertical",
                                  command=canvas.yview)
@@ -145,16 +148,19 @@ def open_add_offer_window(current_window):
 
     canvas.configure(yscrollcommand=scroll_y.set)
 
-    entry_name_label = tkinter.Label(scrollable_frame, text="Table name")
+    add_frame = tkinter.Frame(scrollable_frame)
+    add_frame.pack(padx=half_screen_width)
+
+    entry_name_label = tkinter.Label(add_frame, text="Table name")
     entry_name_label.pack(pady=10)
 
     table_names = get_table_names()
-    entry_name_entry = ttk.Combobox(scrollable_frame, values=table_names)
+    entry_name_entry = ttk.Combobox(add_frame, values=table_names)
     entry_name_entry.pack(pady=5)
 
     entry_name_entry.set('')
 
-    materials_frame = tkinter.LabelFrame(scrollable_frame, text="Materials")
+    materials_frame = tkinter.LabelFrame(add_frame, text="Materials")
     materials_frame.pack(pady=10)
 
     part_designation_label = tkinter.Label(materials_frame,
@@ -201,7 +207,7 @@ def open_add_offer_window(current_window):
     for widget in materials_frame.winfo_children():
         widget.grid_configure(padx=10, pady=5)
 
-    manufacturing_costs_frame = tkinter.LabelFrame(scrollable_frame,
+    manufacturing_costs_frame = tkinter.LabelFrame(add_frame,
                                                    text="Manufacturing costs")
     manufacturing_costs_frame.pack(pady=10)
 
@@ -241,7 +247,7 @@ def open_add_offer_window(current_window):
     for widget in manufacturing_costs_frame.winfo_children():
         widget.grid_configure(padx=10, pady=5)
 
-    sbm_devices_frame = tkinter.LabelFrame(scrollable_frame,
+    sbm_devices_frame = tkinter.LabelFrame(add_frame,
                                            text="SBM-devices-FWZ")
     sbm_devices_frame.pack(pady=10)
 
@@ -273,7 +279,7 @@ def open_add_offer_window(current_window):
     for widget in sbm_devices_frame.winfo_children():
         widget.grid_configure(padx=10, pady=5)
 
-    finish_button = tkinter.Button(scrollable_frame,
+    finish_button = tkinter.Button(add_frame,
                                    text="Finish",
                                    width=40,
                                    height=1,
