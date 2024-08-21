@@ -9,7 +9,7 @@ def create_main_menu():
     global main_menu_window
     main_menu_window = tkinter.Tk()
     main_menu_window.title("Main Menu")
-    main_menu_window.geometry("400x300")
+    main_menu_window.geometry("400x300+1000+200")
 
     button_frame = tkinter.Frame(main_menu_window)
     button_frame.pack(pady=20)

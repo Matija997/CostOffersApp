@@ -1,5 +1,6 @@
 import tkinter
 import tkinter.messagebox
+from tkinter import ttk
 from database import get_connection, create_table, insert_data
 
 
@@ -7,6 +8,14 @@ def open_add_offer_window(current_window):
     from main_menu_window import create_main_menu
 
     current_window.destroy()
+
+    def get_table_names():
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return tables
 
     def save_material_data():
 
@@ -113,7 +122,7 @@ def open_add_offer_window(current_window):
             print(billing_method, device_cost, table_name)
 
         except ValueError:
-            tkinter.messagebox.showerror("Error", "Entry name must be "
+            tkinter.messagebox.showerror("Error", "Table name must be "
                                          "non-empty string")
 
     add_offer_window = tkinter.Tk()
@@ -123,11 +132,14 @@ def open_add_offer_window(current_window):
     frame = tkinter.Frame(add_offer_window)
     frame.pack()
 
-    entry_name_label = tkinter.Label(frame, text="Entry name")
+    entry_name_label = tkinter.Label(frame, text="Table name")
     entry_name_label.grid(row=0, column=0)
 
-    entry_name_entry = tkinter.Entry(frame)
+    table_names = get_table_names()
+    entry_name_entry = ttk.Combobox(frame, values=table_names)
     entry_name_entry.grid(row=1, column=0)
+
+    entry_name_entry.set('')
 
     materials_frame = tkinter.LabelFrame(frame, text="Materials")
     materials_frame.grid(row=2, column=0, padx=20, pady=20)

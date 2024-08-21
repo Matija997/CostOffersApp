@@ -23,8 +23,14 @@ def load_offers(current_window=None):
             for table in tables:
                 listbox.insert(tkinter.END, table[0])
 
-            listbox.bind('<<ListboxSelect>>', lambda e: display_table_data(
+            listbox.bind('<Double-1>', lambda e: display_table_data(
                 listbox.get(listbox.curselection())))
+
+            delete_button = tkinter.Button(
+                load_offers_window,
+                text="Delete Table",
+                command=lambda: delete_table(listbox, load_offers_window))
+            delete_button.pack(pady=10)
 
         else:
             tkinter.Label(current_window, text="No tables found.").pack(
@@ -109,6 +115,35 @@ def display_table_data(table_name):
 
     finally:
         conn.close()
+
+
+def delete_table(listbox, current_window):
+    try:
+        if not listbox.curselection():
+            tkinter.messagebox.showerror("Error", "No table selected!")
+            return
+
+        selected_table = listbox.get(listbox.curselection())
+
+        confirm = tkinter.messagebox.askyesno(
+            "Delete Table",
+            f"Are you sure you want to delete the table '{selected_table}'?"
+        )
+
+        if confirm:
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"DROP TABLE IF EXISTS {selected_table}")
+            conn.commit()
+            conn.close()
+
+            tkinter.messagebox.showinfo("Success", f"Table '{selected_table}'"
+                                        " deleted successfully!")
+            current_window.destroy()
+            load_offers()
+
+    except sqlite3.Error as e:
+        tkinter.messagebox.showerror("Error", f"Error: {str(e)}")
 
 
 def delete_row(table_name, row_id, current_window):
