@@ -129,20 +129,33 @@ def open_add_offer_window(current_window):
     add_offer_window.title("Add offer")
     add_offer_window.state('zoomed')
 
-    frame = tkinter.Frame(add_offer_window)
-    frame.pack()
+    canvas = tkinter.Canvas(add_offer_window)
+    scroll_y = tkinter.Scrollbar(add_offer_window, orient="vertical",
+                                 command=canvas.yview)
+    scrollable_frame = tkinter.Frame(canvas)
 
-    entry_name_label = tkinter.Label(frame, text="Table name")
-    entry_name_label.grid(row=0, column=0)
+    def on_frame_configure(event):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    scrollable_frame.bind("<Configure>", on_frame_configure)
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.pack(side="left", fill="both", expand=True)
+    scroll_y.pack(side="right", fill="y")
+
+    canvas.configure(yscrollcommand=scroll_y.set)
+
+    entry_name_label = tkinter.Label(scrollable_frame, text="Table name")
+    entry_name_label.pack(pady=10)
 
     table_names = get_table_names()
-    entry_name_entry = ttk.Combobox(frame, values=table_names)
-    entry_name_entry.grid(row=1, column=0)
+    entry_name_entry = ttk.Combobox(scrollable_frame, values=table_names)
+    entry_name_entry.pack(pady=5)
 
     entry_name_entry.set('')
 
-    materials_frame = tkinter.LabelFrame(frame, text="Materials")
-    materials_frame.grid(row=2, column=0, padx=20, pady=20)
+    materials_frame = tkinter.LabelFrame(scrollable_frame, text="Materials")
+    materials_frame.pack(pady=10)
 
     part_designation_label = tkinter.Label(materials_frame,
                                            text="Part designation")
@@ -188,9 +201,9 @@ def open_add_offer_window(current_window):
     for widget in materials_frame.winfo_children():
         widget.grid_configure(padx=10, pady=5)
 
-    manufacturing_costs_frame = tkinter.LabelFrame(frame,
+    manufacturing_costs_frame = tkinter.LabelFrame(scrollable_frame,
                                                    text="Manufacturing costs")
-    manufacturing_costs_frame.grid(row=3, column=0, padx=20, pady=20)
+    manufacturing_costs_frame.pack(pady=10)
 
     part_designation_label2 = tkinter.Label(manufacturing_costs_frame,
                                             text="Part designation")
@@ -228,9 +241,9 @@ def open_add_offer_window(current_window):
     for widget in manufacturing_costs_frame.winfo_children():
         widget.grid_configure(padx=10, pady=5)
 
-    sbm_devices_frame = tkinter.LabelFrame(frame,
+    sbm_devices_frame = tkinter.LabelFrame(scrollable_frame,
                                            text="SBM-devices-FWZ")
-    sbm_devices_frame.grid(row=4, column=0, padx=20, pady=20)
+    sbm_devices_frame.pack(pady=10)
 
     billing_method_label = tkinter.Label(sbm_devices_frame,
                                          text="Billing method")
@@ -260,12 +273,13 @@ def open_add_offer_window(current_window):
     for widget in sbm_devices_frame.winfo_children():
         widget.grid_configure(padx=10, pady=5)
 
-    finish_button = tkinter.Button(frame,
+    finish_button = tkinter.Button(scrollable_frame,
                                    text="Finish",
+                                   width=40,
+                                   height=1,
                                    command=lambda:
                                    back_to_main_menu(add_offer_window))
-    finish_button.grid(row=5, column=0,
-                       sticky="news", padx=20, pady=20)
+    finish_button.pack(pady=10)
 
     def back_to_main_menu(current_window):
         current_window.destroy()
