@@ -1,12 +1,28 @@
 import tkinter
 from tkinter import ttk
 import tkinter.messagebox
+from database import get_connection, create_table, insert_data
 
 
-def add_offer_option(option_frame):
+def add_offer_option(option_frame, button_frame):
+
+    def get_table_names():
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return tables
 
     for widget in option_frame.winfo_children():
         widget.destroy()
+
+    entry_name_label = tkinter.Label(button_frame, text="Table name")
+    entry_name_label.grid(row=1, pady=10)
+
+    table_names = get_table_names()
+    entry_name_entry = ttk.Combobox(button_frame, values=table_names)
+    entry_name_entry.grid(row=2, pady=5)
 
     notebook = ttk.Notebook(option_frame)
     notebook.pack(fill='both', expand=True)
@@ -21,7 +37,6 @@ def add_offer_option(option_frame):
 
     save_icon = tkinter.PhotoImage(file="icons/save_icon.png")
 
-    # Add content to Tab 1
     part_designation_label = tkinter.Label(tab1,
                                            text="Part designation")
     part_designation_label.grid(row=0, column=0, padx=20, pady=20)
@@ -108,10 +123,95 @@ def add_offer_option(option_frame):
     manufacturing_save_button.grid(row=2, column=3, padx=50)
 
     def save_material_data():
-        tkinter.messagebox.showinfo("Info", "Material data saved!")
+        try:
+            if (entry_name_entry.get() == ''):
+                raise ValueError("Entry name must be entered")
+            if (entry_name_entry.get()[0].isdigit()):
+                raise ValueError("Entry name must not start with a number")
+            if (entry_name_entry.get().isdigit()):
+                raise ValueError("Entry name must not be a integer")
+            table_name = entry_name_entry.get()
+            part_designation = part_designation_entry.get()
+            designation_raw = designation_raw_entry.get()
+
+            if (imputed_costs_entry.get() == ''):
+                imputed_costs = 0
+            else:
+                imputed_costs = float(imputed_costs_entry.get())
+            if (number_part_entry.get() == ''):
+                number_part = 0
+            else:
+                number_part = int(number_part_entry.get())
+            if (material_scrap_entry.get() == ''):
+                material_scrap = 0
+            else:
+                material_scrap = float(material_scrap_entry.get())
+
+            conn = get_connection()
+            create_table(conn, table_name)
+            data_insert_query = insert_data(table_name)
+            data_insert_tuple = (part_designation,
+                                 designation_raw, imputed_costs,
+                                 number_part, material_scrap, None,
+                                 None, None, None, None, None, None)
+
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
+
+            conn.commit()
+
+            conn.close()
+
+            tkinter.messagebox.showinfo("Success",
+                                        f"Material: {part_designation}"
+                                        " successfully added to"
+                                        f" {table_name} table!")
+
+            print(part_designation, designation_raw,
+                  imputed_costs, number_part, material_scrap, table_name)
+
+        except ValueError:
+            tkinter.messagebox.showerror("Error", "Table name must be "
+                                         "non-empty string")
 
     def save_manufacturing_data():
-        tkinter.messagebox.showinfo("Info", "Manufacturing data saved!")
+        try:
+            if (entry_name_entry.get() == ''):
+                raise ValueError
+            if (entry_name_entry.get()[0].isdigit()):
+                raise ValueError("Entry name must not start with a number")
+            if (entry_name_entry.get().isdigit()):
+                raise ValueError("Entry name must not be a integer")
+            else:
+                table_name = entry_name_entry.get()
+            manufacturing_part = part_designation_entry2.get()
+            direct_cost = direct_cost_entry.get()
+            manufacturing_cost = manufacturing_cost_entry.get()
+            scrap_per_process = scrap_process_entry.get()
+
+            conn = get_connection()
+            create_table(conn, table_name)
+            data_insert_query = insert_data(table_name)
+            data_insert_tuple = (None, None, None, None, None,
+                                 manufacturing_part,
+                                 direct_cost, manufacturing_cost,
+                                 scrap_per_process, None, None, None)
+
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
+
+            conn.commit()
+
+            conn.close()
+            tkinter.messagebox.showinfo("Success", f"Manufacturing: "
+                                        f"{manufacturing_part}"
+                                        " successfully added"
+                                        f" to {table_name} table!")
+            print(manufacturing_part, direct_cost,
+                  manufacturing_cost, scrap_per_process, table_name)
+        except ValueError:
+            tkinter.messagebox.showerror("Error", "Table name must be "
+                                         "non-empty string")
 
     # Add content to Tab 3
     label3 = tkinter.Label(tab3, text="Content for Tab 3")

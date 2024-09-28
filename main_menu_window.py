@@ -38,7 +38,8 @@ def create_main_menu():
                                       bg="lightgreen",
                                       bd=5,
                                       command=lambda:
-                                      add_offer_option(option_frame))
+                                      add_offer_option(option_frame,
+                                                       button_frame))
     add_offer_button.grid(row=0, column=0, padx=10, pady=10)
 
     load_offer_button = tkinter.Button(button_frame,
