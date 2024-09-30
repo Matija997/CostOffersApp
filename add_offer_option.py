@@ -19,8 +19,13 @@ def add_offer_option(option_frame, button_frame):
 
     for widget in option_frame.winfo_children():
         widget.destroy()
+    option_frame.pack_forget()
     for widget in button_frame.winfo_children():
         widget.destroy()
+    button_frame.pack_forget()
+    button_frame.pack(side="top", anchor="w", padx=20)
+    option_frame.pack(side="top", fill="both", expand=True,
+                      padx=20, pady=5)
 
     entry_name_label = tkinter.Label(button_frame, text="Table name")
     entry_name_label.grid(row=1, pady=10)

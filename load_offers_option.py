@@ -8,10 +8,13 @@ from database import get_connection
 def load_offers(option_frame, table_frame):
     for widget in option_frame.winfo_children():
         widget.destroy()
-
+    option_frame.pack_forget()
     for widget in table_frame.winfo_children():
         widget.destroy()
-
+    table_frame.pack_forget()
+    table_frame.pack(side="top", anchor="w", padx=20)
+    option_frame.pack(side="top", fill="both", expand=True,
+                      padx=20, pady=5)
     delete_icon = tkinter.PhotoImage(file="icons/delete_icon.png")
     edit_icon = tkinter.PhotoImage(file="icons/edit_icon.png")
     conn = get_connection()
@@ -39,9 +42,7 @@ def load_offers(option_frame, table_frame):
                 bd=5,
                 text="Delete Table",
                 bg="#FF7F7F",
-                command=lambda: delete_table(listbox,
-                                             table_frame,
-                                             option_frame))
+                command=lambda: delete_table(listbox))
             delete_button.image = delete_icon
             delete_button.grid(row=0, column=2, padx=(5, 10), pady=10)
 
