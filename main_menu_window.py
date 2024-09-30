@@ -1,9 +1,9 @@
 import tkinter
 from add_offer_option import add_offer_option
-# from add_offer_window import open_add_offer_window
 import tkinter.messagebox
-from compare_offer_window import compare_offer
-from load_offers_window import load_offers
+# from compare_offer_window import compare_offer
+from load_offers_option import load_offers
+from compare_offers_option import compare_offers
 
 
 def create_main_menu():
@@ -26,10 +26,15 @@ def create_main_menu():
     compare_offers_icon = tkinter.PhotoImage(
         file="icons/compare_offers_icon.png")
 
+    global tables_frame
+    tables_frame = tkinter.Frame(main_frame)
+    tables_frame.pack(side="top", anchor="w", padx=20)
     global option_frame
-    option_frame = tkinter.Frame(main_frame, bg="white")
+    option_frame = tkinter.Frame(main_frame, bg="white",
+                                 highlightbackground="black",
+                                 highlightthickness=2)
     option_frame.pack(side="top", fill="both", expand=True,
-                      padx=20, pady=20)
+                      padx=20, pady=5)
 
     add_offer_button = tkinter.Button(button_frame,
                                       text="Add Offer",
@@ -39,7 +44,7 @@ def create_main_menu():
                                       bd=5,
                                       command=lambda:
                                       add_offer_option(option_frame,
-                                                       button_frame))
+                                                       tables_frame))
     add_offer_button.grid(row=0, column=0, padx=10, pady=10)
 
     load_offer_button = tkinter.Button(button_frame,
@@ -49,7 +54,8 @@ def create_main_menu():
                                        bg="#ffd92e",
                                        bd=5,
                                        command=lambda:
-                                       load_offers(main_menu_window))
+                                       load_offers(option_frame,
+                                                   tables_frame))
     load_offer_button.grid(row=0, column=1)
 
     compare_offer_frame = tkinter.Frame(button_frame)
@@ -65,9 +71,9 @@ def create_main_menu():
                                           bg="lightblue",
                                           bd=5,
                                           command=lambda:
-                                          compare_offer(
-                                              compare_offer_entry.get(),
-                                              main_menu_window))
+                                          compare_offers(
+                                              option_frame, tables_frame,
+                                              compare_offer_entry.get()))
     compare_offer_button.grid(row=0, column=0, padx=10, pady=10)
 
     main_menu_window.mainloop()

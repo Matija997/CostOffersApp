@@ -1,7 +1,10 @@
 import tkinter
 from tkinter import ttk
 import tkinter.messagebox
+from tkinter import filedialog
 from database import get_connection, create_table, insert_data
+import shutil
+import os
 
 
 def add_offer_option(option_frame, button_frame):
@@ -15,6 +18,8 @@ def add_offer_option(option_frame, button_frame):
         return tables
 
     for widget in option_frame.winfo_children():
+        widget.destroy()
+    for widget in button_frame.winfo_children():
         widget.destroy()
 
     entry_name_label = tkinter.Label(button_frame, text="Table name")
@@ -122,14 +127,41 @@ def add_offer_option(option_frame, button_frame):
     manufacturing_save_button.image = save_icon
     manufacturing_save_button.grid(row=2, column=3, padx=50)
 
+    billing_method_label = tkinter.Label(tab3,
+                                         text="Billing method")
+    billing_method_label.grid(row=0, column=0, padx=20, pady=20)
+
+    billing_method_entry = tkinter.Entry(tab3)
+    billing_method_entry.grid(row=0, column=1, padx=20, pady=20)
+
+    device_cost_label = tkinter.Label(tab3,
+                                      text="Inputed tool/device costs")
+    device_cost_label.grid(row=1, column=0, padx=20, pady=20)
+
+    device_cost_entry = tkinter.Entry(tab3)
+    device_cost_entry.grid(row=1, column=1, padx=20, pady=20)
+
+    file_link_label = tkinter.Label(tab3, text="Excel file link")
+    file_link_label.grid(row=2, column=0, padx=20, pady=20)
+
+    file_link_entry = tkinter.Entry(tab3)
+    file_link_entry.grid(row=2, column=1, padx=20, pady=20)
+
+    browse_button = tkinter.Button(tab3, text="Browse", width=10, height=1,
+                                   command=lambda: browse_file())
+    browse_button.grid(row=2, column=2)
+
+    device_save_button = tkinter.Button(tab3,
+                                        text="Save", width=10, height=1,
+                                        command=lambda: save_SBM_data())
+    device_save_button.grid(row=5, column=1)
+
     def save_material_data():
         try:
             if (entry_name_entry.get() == ''):
                 raise ValueError("Entry name must be entered")
             if (entry_name_entry.get()[0].isdigit()):
                 raise ValueError("Entry name must not start with a number")
-            if (entry_name_entry.get().isdigit()):
-                raise ValueError("Entry name must not be a integer")
             table_name = entry_name_entry.get()
             part_designation = part_designation_entry.get()
             designation_raw = designation_raw_entry.get()
@@ -180,10 +212,7 @@ def add_offer_option(option_frame, button_frame):
                 raise ValueError
             if (entry_name_entry.get()[0].isdigit()):
                 raise ValueError("Entry name must not start with a number")
-            if (entry_name_entry.get().isdigit()):
-                raise ValueError("Entry name must not be a integer")
-            else:
-                table_name = entry_name_entry.get()
+            table_name = entry_name_entry.get()
             manufacturing_part = part_designation_entry2.get()
             direct_cost = direct_cost_entry.get()
             manufacturing_cost = manufacturing_cost_entry.get()
@@ -213,6 +242,57 @@ def add_offer_option(option_frame, button_frame):
             tkinter.messagebox.showerror("Error", "Table name must be "
                                          "non-empty string")
 
-    # Add content to Tab 3
-    label3 = tkinter.Label(tab3, text="Content for Tab 3")
-    label3.pack(pady=20)
+    def save_SBM_data():
+
+        try:
+            if (entry_name_entry.get() == ''):
+                raise ValueError("Table name must be entered")
+            if (entry_name_entry.get()[0].isdigit()):
+                raise ValueError("Table name must not start with a number")
+            table_name = entry_name_entry.get()
+            billing_method = billing_method_entry.get()
+            device_cost = device_cost_entry.get()
+            excel_link = file_link_entry.get()
+
+            if (excel_link == ''):
+                raise ValueError("No excel file has been selected.")
+
+            if not os.path.exists("excel_files"):
+                os.makedirs("excel_files")
+
+            shutil.copy(excel_link, "excel_files")
+            file_name = os.path.basename(excel_link)
+
+            conn = get_connection()
+            create_table(conn, table_name)
+            data_insert_query = insert_data(table_name)
+            data_insert_tuple = (None, None, None, None, None, None,
+                                 None, None, None, billing_method, device_cost,
+                                 file_name)
+
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
+
+            conn.commit()
+
+            conn.close()
+            tkinter.messagebox.showinfo("Success", f"Billing method: "
+                                        f"{billing_method} successfully added"
+                                        f" to {table_name} table!")
+
+            print(billing_method, device_cost, table_name)
+
+        except ValueError as ve:
+            tkinter.messagebox.showerror("Error", str(ve))
+        except Exception as e:
+            tkinter.messagebox.showerror("Error", f"An error occurred: {e}")
+
+    def browse_file():
+        file_path = filedialog.askopenfilename(title="Select a file",
+                                               filetypes=(("Excel files",
+                                                           "*.xlsx"),
+                                                          ("All files",
+                                                           "*.*")))
+        if file_path:
+            file_link_entry.delete(0, tkinter.END)
+            file_link_entry.insert(0, file_path)
