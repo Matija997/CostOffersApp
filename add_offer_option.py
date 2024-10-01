@@ -51,35 +51,35 @@ def add_offer_option(option_frame, button_frame):
                                            text="Part designation")
     part_designation_label.grid(row=0, column=0, padx=20, pady=20)
 
-    part_designation_entry = tkinter.Entry(tab1)
+    part_designation_entry = tkinter.Entry(tab1, width=50)
     part_designation_entry.grid(row=0, column=1, padx=20, pady=20)
 
     designation_raw_label = tkinter.Label(tab1,
                                           text="Designation Raw material")
     designation_raw_label.grid(row=1, column=0, padx=20, pady=20)
 
-    designation_raw_entry = tkinter.Entry(tab1)
+    designation_raw_entry = tkinter.Entry(tab1, width=50)
     designation_raw_entry.grid(row=1, column=1, padx=20, pady=20)
 
     imputed_costs_label = tkinter.Label(tab1,
                                         text="Imputed costs per quantity unit")
     imputed_costs_label.grid(row=2, column=0, padx=20, pady=20)
 
-    imputed_costs_entry = tkinter.Entry(tab1)
+    imputed_costs_entry = tkinter.Entry(tab1, width=50)
     imputed_costs_entry.grid(row=2, column=1, padx=20, pady=20)
 
     number_part_label = tkinter.Label(tab1,
                                       text="Number per quotation part")
     number_part_label.grid(row=3, column=0, padx=20, pady=20)
 
-    number_part_entry = tkinter.Entry(tab1)
+    number_part_entry = tkinter.Entry(tab1, width=50)
     number_part_entry.grid(row=3, column=1, padx=20, pady=20)
 
     material_scrap_label = tkinter.Label(tab1,
                                          text="Material scrap")
     material_scrap_label.grid(row=4, column=0, padx=20, pady=20)
 
-    material_scrap_entry = tkinter.Entry(tab1)
+    material_scrap_entry = tkinter.Entry(tab1, width=50)
     material_scrap_entry.grid(row=4, column=1, padx=20, pady=20)
 
     material_save_button = tkinter.Button(tab1,
@@ -97,28 +97,28 @@ def add_offer_option(option_frame, button_frame):
                                             text="Part designation")
     part_designation_label2.grid(row=0, column=0, padx=20, pady=20)
 
-    part_designation_entry2 = tkinter.Entry(tab2)
+    part_designation_entry2 = tkinter.Entry(tab2, width=50)
     part_designation_entry2.grid(row=0, column=1, padx=20, pady=20)
 
     direct_cost_label = tkinter.Label(tab2,
                                       text="Direct manufacturing costs")
     direct_cost_label.grid(row=1, column=0, padx=20, pady=20)
 
-    direct_cost_entry = tkinter.Entry(tab2)
+    direct_cost_entry = tkinter.Entry(tab2, width=50)
     direct_cost_entry.grid(row=1, column=1, padx=20, pady=20)
 
     manufacturing_cost_label = tkinter.Label(tab2,
                                              text="Manufacturing costs")
     manufacturing_cost_label.grid(row=2, column=0, padx=20, pady=20)
 
-    manufacturing_cost_entry = tkinter.Entry(tab2)
+    manufacturing_cost_entry = tkinter.Entry(tab2, width=50)
     manufacturing_cost_entry.grid(row=2, column=1, padx=20, pady=20)
 
     scrap_process_label = tkinter.Label(tab2,
                                         text="Scrap per process step")
     scrap_process_label.grid(row=3, column=0, padx=20, pady=20)
 
-    scrap_process_entry = tkinter.Entry(tab2)
+    scrap_process_entry = tkinter.Entry(tab2, width=50)
     scrap_process_entry.grid(row=3, column=1, padx=20, pady=20)
 
     manufacturing_save_button = tkinter.Button(tab2,
@@ -136,20 +136,20 @@ def add_offer_option(option_frame, button_frame):
                                          text="Billing method")
     billing_method_label.grid(row=0, column=0, padx=20, pady=20)
 
-    billing_method_entry = tkinter.Entry(tab3)
+    billing_method_entry = tkinter.Entry(tab3, width=50)
     billing_method_entry.grid(row=0, column=1, padx=20, pady=20)
 
     device_cost_label = tkinter.Label(tab3,
                                       text="Inputed tool/device costs")
     device_cost_label.grid(row=1, column=0, padx=20, pady=20)
 
-    device_cost_entry = tkinter.Entry(tab3)
+    device_cost_entry = tkinter.Entry(tab3, width=50)
     device_cost_entry.grid(row=1, column=1, padx=20, pady=20)
 
     file_link_label = tkinter.Label(tab3, text="Excel file link")
     file_link_label.grid(row=2, column=0, padx=20, pady=20)
 
-    file_link_entry = tkinter.Entry(tab3)
+    file_link_entry = tkinter.Entry(tab3, width=50)
     file_link_entry.grid(row=2, column=1, padx=20, pady=20)
 
     browse_button = tkinter.Button(tab3, text="Browse", width=10, height=1,
@@ -157,9 +157,13 @@ def add_offer_option(option_frame, button_frame):
     browse_button.grid(row=2, column=2)
 
     device_save_button = tkinter.Button(tab3,
-                                        text="Save", width=10, height=1,
+                                        text="Save", image=save_icon,
+                                        compound="top",
+                                        bd=5,
+                                        bg="white",
                                         command=lambda: save_SBM_data())
-    device_save_button.grid(row=5, column=1)
+    device_save_button.grid(row=1, column=2)
+    device_save_button.image = save_icon
 
     def save_material_data():
         try:

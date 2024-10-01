@@ -94,29 +94,88 @@ def compare_offers(option_frame, table_frame1, partial_table_name):
                 sbm_data_frame = tkinter.Frame(section3_frame)
                 sbm_data_frame.grid(row=0, column=0)
 
-                material_row = 0
+                mat_header_label1 = tkinter.Label(mat_data_frame,
+                                                  text="Part designation")
+                mat_header_label1.grid(row=0, column=0, pady=5,
+                                       padx=5, sticky="news")
+
+                mat_header_label2 = tkinter.Label(mat_data_frame,
+                                                  text="Designation raw")
+                mat_header_label2.grid(row=0, column=1, pady=5,
+                                       padx=5, sticky="news")
+
+                mat_header_label3 = tkinter.Label(mat_data_frame,
+                                                  text="Imputed costs")
+                mat_header_label3.grid(row=0, column=2, pady=5,
+                                       padx=5, sticky="news")
+
+                mat_header_label4 = tkinter.Label(mat_data_frame,
+                                                  text="Number part")
+                mat_header_label4.grid(row=0, column=3, pady=5,
+                                       padx=5, sticky="news")
+
+                mat_header_label5 = tkinter.Label(mat_data_frame,
+                                                  text="Material scrap")
+                mat_header_label5.grid(row=0, column=4, pady=5,
+                                       padx=5, sticky="news")
+
+                man_header_label1 = tkinter.Label(man_data_frame,
+                                                  text="Part designation")
+                man_header_label1.grid(row=0, column=2, pady=5,
+                                       padx=5, sticky="news")
+
+                man_header_label2 = tkinter.Label(
+                    man_data_frame,
+                    text="Direct manufacturing costs")
+                man_header_label2.grid(row=0, column=3, pady=5, padx=5,
+                                       sticky="news")
+
+                man_header_label3 = tkinter.Label(man_data_frame,
+                                                  text="Manufacturing costs")
+                man_header_label3.grid(row=0, column=4, pady=5, padx=5,
+                                       sticky="news")
+
+                man_header_label4 = tkinter.Label(man_data_frame,
+                                                  text="Scrap per process")
+                man_header_label4.grid(row=0, column=5, pady=5,
+                                       padx=5, sticky="news")
+
+                sbm_header_label1 = tkinter.Label(sbm_data_frame,
+                                                  text="Billing method")
+                sbm_header_label1.grid(row=0, column=3, pady=5, padx=5,
+                                       sticky="news")
+
+                sbm_header_label2 = tkinter.Label(sbm_data_frame,
+                                                  text="Inputed device cost")
+                sbm_header_label2.grid(row=0, column=4, pady=5, padx=5,
+                                       sticky="news")
+                material_row = 1
                 for i in range(len(data)):
                     if all(value not in [None,
                                          "None"] for value in data[i][:5]):
                         for j in range(min(len(columns), 5)):
                             label = tkinter.Label(mat_data_frame,
-                                                  text=str(data[i][j]))
+                                                  text=str(data[i][j]),
+                                                  borderwidth=1,
+                                                  relief="solid")
                             label.grid(row=material_row, column=j, pady=5,
                                        padx=5,
-                                       sticky="nw")
+                                       sticky="news")
                         material_row += 1
 
-                manufacturing_row = 0
+                manufacturing_row = 1
                 for i in range(len(data)):
                     if all(value not in [None,
                                          "None"] for value in data[i][5:9]):
                         for j in range(5, 9):
                             if j < len(columns):
                                 label = tkinter.Label(man_data_frame,
-                                                      text=str(data[i][j]))
+                                                      text=str(data[i][j]),
+                                                      borderwidth=1,
+                                                      relief="solid")
                                 label.grid(row=manufacturing_row, column=j - 3,
                                            pady=5, padx=5,
-                                           sticky="nw")
+                                           sticky="news")
                         manufacturing_row += 1
 
                 for i in range(len(data)):
@@ -125,10 +184,12 @@ def compare_offers(option_frame, table_frame1, partial_table_name):
                             for j in range(9, 11):
                                 if j < len(columns):
                                     label = tkinter.Label(sbm_data_frame,
-                                                          text=str(data[i][j]))
+                                                          text=str(data[i][j]),
+                                                          borderwidth=1,
+                                                          relief="solid")
                                     label.grid(row=i, column=j - 6,
                                                pady=5,
-                                               sticky="nw")
+                                               sticky="news")
 
                 total_material = 0
                 total_manuf = 0
@@ -154,7 +215,7 @@ def compare_offers(option_frame, table_frame1, partial_table_name):
                     section1_frame,
                     text=f"Total Material Cost: {total_material:.2f} $",
                     font=('bold', 10))
-                total_material_label.grid(padx=5, pady=5, sticky="w")
+                total_material_label.grid(padx=5, pady=5, sticky="we")
 
                 total_manuf_frame = tkinter.Frame(section2_frame)
                 total_manuf_frame.grid(row=1, column=0)
@@ -165,7 +226,7 @@ def compare_offers(option_frame, table_frame1, partial_table_name):
                     font=('bold', 10))
                 total_manufacturing_label.grid(row=len(data), column=0,
                                                columnspan=4, padx=5, pady=10,
-                                               sticky="w")
+                                               sticky="e")
 
                 link_frame = tkinter.Frame(section3_frame)
                 link_frame.grid(row=1, column=0)
