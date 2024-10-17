@@ -1,9 +1,9 @@
 import tkinter
 from add_offer_option import add_offer_option
 import tkinter.messagebox
-# from compare_offer_window import compare_offer
 from load_offers_option import load_offers
 from compare_offers_option import compare_offers
+from tkinter import messagebox
 
 
 def create_main_menu():
@@ -11,6 +11,11 @@ def create_main_menu():
     main_menu_window = tkinter.Tk()
     main_menu_window.title("Cost Offers Compare")
     main_menu_window.state('zoomed')
+
+    try:
+        main_menu_window.iconbitmap("icons/icon_taskbar1.ico")
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to load taskbar icon: {e}")
 
     app_icon = tkinter.PhotoImage(file="icons/app_icon.png")
     main_menu_window.iconphoto(False, app_icon)

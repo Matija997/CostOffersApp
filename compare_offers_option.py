@@ -42,6 +42,13 @@ def compare_offers(option_frame, table_frame1, partial_table_name):
                 )
             )
 
+            def _on_mouse_scroll(event):
+                if event.state & 0x0001:
+                    canvas.xview_scroll(int(-1 * (event.delta / 120)), "units")
+                else:
+                    canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+            canvas.bind_all("<MouseWheel>", _on_mouse_scroll)
             canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
             canvas.configure(yscrollcommand=v_scrollbar.set,
                              xscrollcommand=h_scrollbar.set)
