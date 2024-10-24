@@ -31,3 +31,18 @@ def insert_data(table_name):
         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
     return data_insert_query
+
+
+def insert_data_all(conn, table_name, data):
+    """Inserts data into the specified table."""
+    data_insert_query = f'''INSERT INTO {table_name} (
+        material_part_designation, designation_raw, imputed_costs,
+        number_part, material_scrap,
+        manufacturing_part_designation, direct_manufacturing_costs,
+        manufacturing_costs, scrap_per_process, billing_method,
+        inputed_device_cost, excel_link
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+    cursor = conn.cursor()
+    cursor.executemany(data_insert_query, data)
+    conn.commit()

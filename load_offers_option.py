@@ -210,15 +210,20 @@ def load_offers(option_frame, table_frame):
             cursor.execute(f"PRAGMA table_info({table_name})")
             columns = [col[1] for col in cursor.fetchall()]
 
+            cursor.execute(f"SELECT rowid, * FROM {table_name}")
+            current_data = cursor.fetchall()
+
+            # row_mapping = {row[0]: i for i, row in enumerate(current_data)}
+
             for i, entry in enumerate(entries):
-                row = i // len(columns)
+                row = current_data[i // len(columns)][0]
                 col = i % len(columns)
                 value = entry.get()
                 query = (
                     f"UPDATE {table_name} "
                     f"SET {columns[col]} = ? "
                     f"WHERE rowid = ?")
-                parameters = (value, row + 1)
+                parameters = (value, row)
 
                 cursor.execute(query, parameters)
 

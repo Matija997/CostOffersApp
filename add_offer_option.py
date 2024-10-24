@@ -2,9 +2,10 @@ import tkinter
 from tkinter import ttk
 import tkinter.messagebox
 from tkinter import filedialog
-from database import get_connection, create_table, insert_data
+from database import get_connection, create_table, insert_data, insert_data_all
 import shutil
 import os
+import pandas as pd
 
 
 def add_offer_option(option_frame, button_frame):
@@ -40,12 +41,15 @@ def add_offer_option(option_frame, button_frame):
     tab1 = ttk.Frame(notebook)
     tab2 = ttk.Frame(notebook)
     tab3 = ttk.Frame(notebook)
+    tab4 = ttk.Frame(notebook)
 
     notebook.add(tab1, text='Material costs')
     notebook.add(tab2, text='Manufacturing costs')
     notebook.add(tab3, text='SBM')
+    notebook.add(tab4, text='Add all data from excel file')
 
     save_icon = tkinter.PhotoImage(file="icons/save_icon.png")
+    get_icon = tkinter.PhotoImage(file="icons/get_data.png")
 
     part_designation_label = tkinter.Label(tab1,
                                            text="Part designation")
@@ -164,6 +168,39 @@ def add_offer_option(option_frame, button_frame):
                                         command=lambda: save_SBM_data())
     device_save_button.grid(row=1, column=2)
     device_save_button.image = save_icon
+
+    billing_method_label = tkinter.Label(tab4,
+                                         text="Billing method")
+    billing_method_label.grid(row=1, column=0, padx=20, pady=20)
+
+    billing_method_entry = tkinter.Entry(tab4, width=50)
+    billing_method_entry.grid(row=1, column=1, padx=20, pady=20)
+
+    device_cost_label = tkinter.Label(tab4,
+                                      text="Inputed tool/device costs")
+    device_cost_label.grid(row=2, column=0, padx=20, pady=20)
+
+    device_cost_entry = tkinter.Entry(tab4, width=50)
+    device_cost_entry.grid(row=2, column=1, padx=20, pady=20)
+
+    file_link_label = tkinter.Label(tab4, text="Excel file link")
+    file_link_label.grid(row=0, column=0, padx=20, pady=20)
+
+    file_link_entry = tkinter.Entry(tab4, width=50)
+    file_link_entry.grid(row=0, column=1, padx=20, pady=20)
+
+    browse_button = tkinter.Button(tab4, text="Browse", width=10, height=1,
+                                   command=lambda: browse_file())
+    browse_button.grid(row=0, column=2)
+
+    device_save_button = tkinter.Button(tab4,
+                                        text="Get Data", image=get_icon,
+                                        compound="top",
+                                        bd=5,
+                                        bg="white",
+                                        command=lambda: get_all_data())
+    device_save_button.grid(row=1, column=2)
+    device_save_button.image = get_icon
 
     def save_material_data():
         try:
@@ -288,6 +325,111 @@ def add_offer_option(option_frame, button_frame):
             tkinter.messagebox.showinfo("Success", f"Billing method: "
                                         f"{billing_method} successfully added"
                                         f" to {table_name} table!")
+
+            print(billing_method, device_cost, table_name)
+
+        except ValueError as ve:
+            tkinter.messagebox.showerror("Error", str(ve))
+        except Exception as e:
+            tkinter.messagebox.showerror("Error", f"An error occurred: {e}")
+
+    def get_all_data():
+
+        try:
+            if (entry_name_entry.get() == ''):
+                raise ValueError("Table name must be entered")
+            if (entry_name_entry.get()[0].isdigit()):
+                raise ValueError("Table name must not start with a number")
+            table_name = entry_name_entry.get()
+            billing_method = billing_method_entry.get()
+            device_cost = device_cost_entry.get()
+            excel_link = file_link_entry.get()
+
+            if (excel_link == ''):
+                raise ValueError("No excel file has been selected.")
+
+            if not os.path.exists("excel_files"):
+                os.makedirs("excel_files")
+
+            shutil.copy(excel_link, "excel_files")
+            file_name = os.path.basename(excel_link)
+
+            def read_excel_material(file_path):
+                df = pd.read_excel(file_path, sheet_name=0,
+                                   skiprows=3, usecols=[2, 3, 10, 12, 21])
+
+                data = [
+                    (*row, None, None, None, None, None, None, None)
+                    for row in df.itertuples(index=False, name=None)
+                ]
+
+                return data
+
+            def read_excel_manuf(file_path):
+                df = pd.read_excel(file_path, sheet_name=1, skiprows=3,
+                                   usecols=[2, 14, 16, 19])
+
+                data = [
+                    (None, None, None, None, None, *row, None, None, None)
+                    for row in df.itertuples(index=False, name=None)
+                ]
+                return data
+
+            def delete_null_rows_materials(conn, table_name):
+                delete_query = (f"DELETE FROM {table_name} "
+                                "WHERE material_part_designation IS NULL")
+                cursor = conn.cursor()
+                cursor.execute(delete_query)
+                conn.commit()
+
+            def delete_null_rows_manuf(conn, table_name):
+                delete_query = (
+                    f"DELETE FROM {table_name} "
+                    "WHERE material_part_designation IS NULL AND "
+                    "manufacturing_part_designation IS NULL"
+                )
+                cursor = conn.cursor()
+                cursor.execute(delete_query)
+                conn.commit()
+
+            def update_null_to_empty_string(conn, table_name):
+                update_query = f"""
+                UPDATE {table_name}
+                SET designation_raw = ''
+                WHERE designation_raw IS NULL;
+
+                UPDATE {table_name}
+                SET designation_raw = ''
+                WHERE designation_raw IS NULL;
+                """
+                cursor = conn.cursor()
+                cursor.executescript(update_query)
+                conn.commit()
+
+            conn = get_connection()
+            create_table(conn, table_name)
+            data_mat = read_excel_material(excel_link)
+            insert_data_all(conn, table_name, data_mat)
+            delete_null_rows_materials(conn, table_name)
+            update_null_to_empty_string(conn, table_name)
+
+            data_m = read_excel_manuf(excel_link)
+            insert_data_all(conn, table_name, data_m)
+            delete_null_rows_manuf(conn, table_name)
+
+            data_insert_query = insert_data(table_name)
+            data_insert_tuple = (None, None, None, None, None, None,
+                                 None, None, None, billing_method, device_cost,
+                                 file_name)
+
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
+
+            conn.commit()
+
+            conn.close()
+            tkinter.messagebox.showinfo("Success", f"Successfully added"
+                                        f" {table_name} table to database!")
 
             print(billing_method, device_cost, table_name)
 
